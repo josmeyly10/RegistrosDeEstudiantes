@@ -2,12 +2,13 @@ package com.example.registrodeestudiantes.presentacion.estudiante
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,22 +23,15 @@ import com.example.registrodeestudiantes.presentacion.estudiante.list.ListEstudi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EstudianteScreen(
-    viewModel: ListEstudianteViewModel = hiltViewModel()
+    viewModel: ListEstudianteViewModel = hiltViewModel(),
+    onDrawer: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showDialog by remember { mutableStateOf(false) }
     var estudianteToEdit by remember { mutableStateOf<Estudiante?>(null) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Registro de Estudiantes") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
-        },
+
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
