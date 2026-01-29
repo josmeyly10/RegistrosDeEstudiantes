@@ -1,4 +1,4 @@
-package com.example.registrodeestudiantes.presentacion.estudiante
+package com.example.registrodeestudiantes.presentacion.asignatura
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,31 +15,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.registrodeestudiantes.domain.estudiante.model.Estudiante
-import com.example.registrodeestudiantes.presentacion.estudiante.list.ListEstudianteUiEvent
-import com.example.registrodeestudiantes.presentacion.estudiante.list.ListEstudianteViewModel
+import com.example.registrodeestudiantes.domain.asignatura.model.Asignatura
+import com.example.registrodeestudiantes.presentacion.asignatura.list.ListAsignaturaUiEvent
+import com.example.registrodeestudiantes.presentacion.asignatura.list.ListAsignaturaViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EstudianteScreen(
-    viewModel: ListEstudianteViewModel = hiltViewModel(),
+fun AsignaturaScreen(
+    viewModel: ListAsignaturaViewModel = hiltViewModel(),
     onDrawer: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showDialog by remember { mutableStateOf(false) }
-    var estudianteToEdit by remember { mutableStateOf<Estudiante?>(null) }
+    var asignaturaToEdit by remember { mutableStateOf<Asignatura?>(null) }
 
     Scaffold(
 
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    estudianteToEdit = null
+                    asignaturaToEdit = null
                     showDialog = true
                 }
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar estudiante")
+                Icon(Icons.Default.Add, contentDescription = "Agregar asignatura")
             }
         }
     ) { padding ->
@@ -51,7 +51,7 @@ fun EstudianteScreen(
 
             SearchBar(
                 query = state.searchQuery,
-                onQueryChange = { viewModel.onEvent(ListEstudianteUiEvent
+                onQueryChange = { viewModel.onEvent(ListAsignaturaUiEvent
                     .SearchQueryChanged(it)) },
                 modifier = Modifier.padding(16.dp)
             )
@@ -66,7 +66,7 @@ fun EstudianteScreen(
                         CircularProgressIndicator()
                     }
                 }
-                state.estudiantes.isEmpty() -> {
+                state.asignaturas.isEmpty() -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -77,7 +77,7 @@ fun EstudianteScreen(
                         ) {
                             Text(
                                 text = if (state.searchQuery.isBlank()) {
-                                    "No hay estudiantes registrados"
+                                    "No hay asignaturas registradas"
                                 } else {
                                     "No se encontraron resultados"
                                 },
@@ -87,7 +87,7 @@ fun EstudianteScreen(
                             if (state.searchQuery.isBlank()) {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "Presiona el botón + para agregar uno",
+                                    text = "Presiona el botón + para agregar una",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -102,19 +102,19 @@ fun EstudianteScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
-                            items = state.estudiantes,
-                            key = { it.estudianteId }
-                        ) { estudiante ->
-                            EstudianteCard(
-                                estudiante = estudiante,
+                            items = state.asignaturas,
+                            key = { it.asignaturaId }
+                        ) { asignatura ->
+                            AsignaturaCard(
+                                asignatura = asignatura,
                                 onEdit = {
-                                    estudianteToEdit = estudiante
+                                    asignaturaToEdit = asignatura
                                     showDialog = true
                                 },
                                 onDelete = {
                                     viewModel.onEvent(
-                                        ListEstudianteUiEvent.OnDeleteEstudiante(estudiante
-                                            .estudianteId)
+                                        ListAsignaturaUiEvent.OnDeleteAsignatura(asignatura
+                                            .asignaturaId)
                                     )
                                 }
                             )
@@ -126,16 +126,16 @@ fun EstudianteScreen(
 
 
         if (showDialog) {
-            EstudianteFormDialog(
-                estudiante = estudianteToEdit,
+            AsignaturaFormDialog(
+                asignatura = asignaturaToEdit,
                 onDismiss = {
                     showDialog = false
-                    estudianteToEdit = null
+                    asignaturaToEdit = null
                 },
-                onSave = { estudiante ->
-                    viewModel.onEvent(ListEstudianteUiEvent.OnSaveEstudiante(estudiante))
+                onSave = { asignatura ->
+                    viewModel.onEvent(ListAsignaturaUiEvent.OnSaveAsignatura(asignatura))
                     showDialog = false
-                    estudianteToEdit = null
+                    asignaturaToEdit = null
                 }
             )
         }
@@ -153,7 +153,7 @@ private fun SearchBar(
         value = query,
         onValueChange = onQueryChange,
         modifier = modifier.fillMaxWidth(),
-        placeholder = { Text("Buscar por nombre o email...") },
+        placeholder = { Text("Buscar por nombre o código...") },
         leadingIcon = {
             Icon(Icons.Default.Search, contentDescription = "Buscar")
         },
@@ -164,8 +164,8 @@ private fun SearchBar(
 
 
 @Composable
-private fun EstudianteCard(
-    estudiante: Estudiante,
+private fun AsignaturaCard(
+    asignatura: Asignatura,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -184,19 +184,19 @@ private fun EstudianteCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = estudiante.nombres,
+                    text = asignatura.nombre,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = estudiante.email,
+                    text = "Código: ${asignatura.codigo}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "${estudiante.edad} años",
+                    text = "${asignatura.creditos} créditos",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -224,24 +224,26 @@ private fun EstudianteCard(
 
 
 @Composable
-private fun EstudianteFormDialog(
-    estudiante: Estudiante?,
+private fun AsignaturaFormDialog(
+    asignatura: Asignatura?,
     onDismiss: () -> Unit,
-    onSave: (Estudiante) -> Unit
+    onSave: (Asignatura) -> Unit
 ) {
-    var nombres by remember { mutableStateOf(estudiante?.nombres ?: "") }
-    var email by remember { mutableStateOf(estudiante?.email ?: "") }
-    var edad by remember { mutableStateOf(estudiante?.edad?.toString() ?: "") }
+    var nombre by remember { mutableStateOf(asignatura?.nombre ?: "") }
+    var codigo by remember { mutableStateOf(asignatura?.codigo ?: "") }
+    var aula by remember { mutableStateOf(asignatura?.aula ?: "") }
+    var creditos by remember { mutableStateOf(asignatura?.creditos?.toString() ?: "") }
 
-    var nombresError by remember { mutableStateOf<String?>(null) }
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var edadError by remember { mutableStateOf<String?>(null) }
+    var nombreError by remember { mutableStateOf<String?>(null) }
+    var codigoError by remember { mutableStateOf<String?>(null) }
+    var aulaError by remember { mutableStateOf<String?>(null) }
+    var creditosError by remember { mutableStateOf<String?>(null) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (estudiante == null) "Nuevo Estudiante" else "Editar Estudiante",
+                text = if (asignatura == null) "Nueva Asignatura" else "Editar Asignatura",
                 style = MaterialTheme.typography.titleLarge
             )
         },
@@ -251,45 +253,61 @@ private fun EstudianteFormDialog(
             ) {
 
                 OutlinedTextField(
-                    value = nombres,
+                    value = nombre,
                     onValueChange = {
-                        nombres = it
-                        nombresError = null
+                        nombre = it
+                        nombreError = null
                     },
-                    label = { Text("Nombres") },
-                    isError = nombresError != null,
-                    supportingText = nombresError?.let { { Text(it, color = MaterialTheme
-                        .colorScheme.error) } },
+                    label = { Text("Nombre") },
+                    isError = nombreError != null,
+                    supportingText = nombreError?.let {
+                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
 
-
                 OutlinedTextField(
-                    value = email,
+                    value = codigo,
                     onValueChange = {
-                        email = it
-                        emailError = null
+                        codigo = it
+                        codigoError = null
                     },
-                    label = { Text("Email") },
-                    isError = emailError != null,
-                    supportingText = emailError?.let { { Text(it, color = MaterialTheme
-                        .colorScheme.error) } },
+                    label = { Text("Código") },
+                    isError = codigoError != null,
+                    supportingText = codigoError?.let {
+                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
 
+                OutlinedTextField(
+                    value = aula,
+                    onValueChange = {
+                        aula = it
+                        aulaError = null
+                    },
+                    label = { Text("Aula") },
+                    isError = aulaError != null,
+                    supportingText = aulaError?.let {
+                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
 
                 OutlinedTextField(
-                    value = edad,
+                    value = creditos,
                     onValueChange = {
-                        edad = it
-                        edadError = null
+                        creditos = it
+                        creditosError = null
                     },
-                    label = { Text("Edad") },
-                    isError = edadError != null,
-                    supportingText = edadError?.let { { Text(it, color = MaterialTheme.
-                    colorScheme.error) } },
+                    label = { Text("Créditos") },
+                    isError = creditosError != null,
+                    supportingText = creditosError?.let {
+                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -301,26 +319,40 @@ private fun EstudianteFormDialog(
 
                     var hasError = false
 
-                    if (nombres.isBlank()) {
-                        nombresError = "Los nombres no pueden estar vacíos"
+                    if (nombre.isBlank()) {
+                        nombreError = "El nombre no puede estar vacío"
                         hasError = true
                     }
-                    if (email.isBlank() || !email.contains("@")) {
-                        emailError = "El email debe contener @"
+
+                    if (codigo.isBlank()) {
+                        codigoError = "El código no puede estar vacío"
                         hasError = true
                     }
-                    if (edad.isBlank() || edad.toIntOrNull() == null) {
-                        edadError = "La edad debe ser un número válido"
+
+                    if (aula.isBlank()) {
+                        aulaError = "El aula no puede estar vacío"
+                        hasError = true
+                    }
+
+                    if (creditos.isBlank() || creditos.toIntOrNull() == null) {
+                        creditosError = "Los créditos deben ser un número válido"
                         hasError = true
                     }
 
                     if (!hasError) {
+                        val id = if (asignatura == null || asignatura.asignaturaId == 0) {
+                            0
+                        } else {
+                            asignatura.asignaturaId
+                        }
+
                         onSave(
-                            Estudiante(
-                                estudianteId = estudiante?.estudianteId ?: 0,
-                                nombres = nombres.trim(),
-                                email = email.trim(),
-                                edad = edad.toInt()
+                            Asignatura(
+                                asignaturaId = id,
+                                nombre = nombre.trim(),
+                                codigo = codigo.trim(),
+                                aula = aula.trim(),
+                                creditos = creditos.toInt()
                             )
                         )
                     }
