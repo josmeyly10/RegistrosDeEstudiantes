@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +25,20 @@ fun ListAsignaturaScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    ListAsignaturaBody(
+        state = state,
+        onNavigateToEdit = onNavigateToEdit,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ListAsignaturaBody(
+    state: ListAsignaturaUiState,
+    onNavigateToEdit: (Int?) -> Unit,
+    onEvent: (ListAsignaturaUiEvent) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,7 +61,7 @@ fun ListAsignaturaScreen(
 
             SearchBar(
                 query = state.searchQuery,
-                onQueryChange = { viewModel.onEvent(ListAsignaturaUiEvent.SearchQueryChanged(it)) }
+                onQueryChange = { onEvent(ListAsignaturaUiEvent.SearchQueryChanged(it)) }
             )
 
 
@@ -84,7 +99,7 @@ fun ListAsignaturaScreen(
                         AsignaturaItem(
                             asignatura = asignatura,
                             onClick = { onNavigateToEdit(asignatura.asignaturaId) },
-                            onDelete = { viewModel.onEvent(ListAsignaturaUiEvent.OnDeleteAsignatura
+                            onDelete = { onEvent(ListAsignaturaUiEvent.OnDeleteAsignatura
                                 (asignatura.asignaturaId)) }
                         )
                     }
@@ -160,5 +175,14 @@ private fun AsignaturaItem(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ListAsignaturaBodyPreview(){
+    MaterialTheme {
+        val state = ListAsignaturaUiState()
+        ListAsignaturaBody(state, {}, {})
     }
 }
