@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.registrodeestudiantes.presentacion.asignatura.AsignaturaScreen
 import com.example.registrodeestudiantes.presentacion.estudiante.EstudianteScreen
+import com.example.registrodeestudiantes.presentacion.tipopenalidad.TipoPenalidadScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -37,6 +38,16 @@ fun MainNavHost(
 
             composable<Screen.AsignaturaList> {
                 AsignaturaScreen(
+                    onDrawer = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }
+                )
+            }
+
+            composable<Screen.TipoPenalidadList> {
+                TipoPenalidadScreen(
                     onDrawer = {
                         scope.launch {
                             drawerState.open()

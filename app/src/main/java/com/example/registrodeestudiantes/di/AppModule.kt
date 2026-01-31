@@ -4,7 +4,9 @@ import androidx.room.Room
 import com.example.registrodeestudiantes.data.local.dao.AsignaturaDao
 import com.example.registrodeestudiantes.data.local.database.EstudianteDb
 import com.example.registrodeestudiantes.data.local.dao.EstudianteDao
+import com.example.registrodeestudiantes.data.local.dao.TipoPenalidadDao
 import com.example.registrodeestudiantes.data.local.database.AsignaturaDb
+import com.example.registrodeestudiantes.data.local.database.TipoPenalidadDb
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,5 +56,24 @@ object AppModule {
         return database.asignaturaDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideTipoPenalidadDb(
+        @ApplicationContext appContext: Context
+    ): TipoPenalidadDb = Room.databaseBuilder(
+        appContext,
+        TipoPenalidadDb::class.java,
+        "TipoPenalidad.db"
+    )
+        .fallbackToDestructiveMigration()
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideTipoPenalidadDao(database: TipoPenalidadDb): TipoPenalidadDao {
+        return database.TipoPenalidadDao()
+    }
 
 }
+
+
