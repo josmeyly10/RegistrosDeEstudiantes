@@ -1,7 +1,8 @@
 package com.example.registrodeestudiantes.di
-import com.example.registrodeestudiantes.data.local.dao.AsignaturaDao
 import com.example.registrodeestudiantes.data.repository.AsignaturaRepositoryImpl
 import com.example.registrodeestudiantes.data.repository.EstudianteRepositoryImpl
+import com.example.registrodeestudiantes.data.repository.TipoPenalidadRepositoryImpl
+import com.example.registrodeestudiantes.domain.tipopenalidad.repository.TipoPenalidadRepository
 import com.example.registrodeestudiantes.domain.asignatura.repository.AsignaturaRepository
 import com.example.registrodeestudiantes.domain.estudiante.repository.EstudianteRepository
 import dagger.Binds
@@ -26,5 +27,13 @@ abstract class EstudianteRepositoryModule {
     abstract fun bindAsignaturaRepository(
         asignaturaRepositoryImpl: AsignaturaRepositoryImpl
     ): AsignaturaRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTipoPenalidadRepository(
+        tipoPenalidadRepositoryImpl: TipoPenalidadRepositoryImpl
+    ): TipoPenalidadRepository
+
+
 }
 
