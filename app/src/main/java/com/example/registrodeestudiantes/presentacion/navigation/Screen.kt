@@ -7,4 +7,7 @@ sealed class Screen {
 
     @Serializable
     data object AsignaturaList : Screen()
+
+    @Serializable
+    data object TipoPenalidadList : Screen()
 }
